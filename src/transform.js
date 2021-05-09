@@ -41,16 +41,14 @@ export function transform(strings, ...values) {
   let parsedString = ``;
   let i = 0;
   while (i < values.length) {
-    if (typeof values[i] === 'function') {
-      if (values[i + 1]) {
-        parsedString += `${strings[i]}${convertFuncName(values[i], strings[i + 1], values[i + 1])}`;
-        i += 2;
-      } else {
-        parsedString += `${strings[i]}${convertFuncName(values[i])}`;
-        i += 1;
-      }
+    parsedString += `${strings[i]}${findHandler(values[i])(
+      values[i],
+      strings[i + 1],
+      values[i + 1],
+    )}`;
+    if (typeof values[i] === 'function' && values[i + 1] && level === 80) {
+      i += 2;
     } else {
-      parsedString += `${strings[i]}${findHandler(values[i])(values[i])}`;
       i += 1;
     }
   }
@@ -77,7 +75,7 @@ export function transform(strings, ...values) {
 // LEVEL 2
 
 export function testFunction(argName, valName) {
-  if (valName && argName) {
+  if (valName && argName && level === 80) {
     return `${testFunction.name.toUpperCase()}(${argName.replace(/\s/g, '')}=${valName})`;
   }
   return `${testFunction.name.toUpperCase()}`;
